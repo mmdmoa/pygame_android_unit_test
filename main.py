@@ -29,12 +29,17 @@ try:
     core.assets.load_assets()
 
 
+    def get_fps_text() -> Surface:
+        return fonts['small'].render(f"FPS: {round(cr.event_holder.final_fps)}",True,'black')
+
     async def main_loop():
         pic = pics['clown'].copy()
         rotated_pic = pic.copy()
         angle = 0
 
         while not cr.event_holder.should_quit:
+
+
             cr.screen.fill("gray")
 
             cr.event_holder.get_events()
@@ -45,6 +50,14 @@ try:
             cr.screen.blit(rotated_pic,rect)
 
             cr.game.render()
+
+
+            text = get_fps_text()
+            rect = text.get_rect()
+            rect.x = cr.screen.get_width() - rect.w
+            rect.y = cr.screen.get_height() - rect.h
+            cr.screen.blit(text,rect)
+
 
             pg.display.update()
             await asyncio.sleep(0)
