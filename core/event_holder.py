@@ -1,5 +1,5 @@
 from core.common.names import *
-
+import core.common.resources as cr
 
 class EventHolder :
     def __init__( self ) :
@@ -7,7 +7,7 @@ class EventHolder :
         self.released_keys = []
         self.held_keys = []
         self.window_focus = True
-
+        self.fingers = {}
         self.mouse_moved = False
         self.mouse_pos = Vector2(0, 0)
         self.mouse_pressed_keys = [False, False, False]
@@ -46,6 +46,15 @@ class EventHolder :
         self.dt = (self.clock.tick(self.determined_fps) / 1000)
 
         for i in pg.event.get() :
+            if i.type == FINGERDOWN or i.type == FINGERMOTION:
+                self.fingers[i.finger_id] = i
+                self.fingers[i.finger_id].x *= cr.screen.get_width()
+                self.fingers[i.finger_id].y *= cr.screen.get_height()
+
+            if i.type == FINGERUP:
+                if i.finger_id in self.fingers:
+                    del(self.fingers[i.finger_id])
+
             if i.type == WINDOWFOCUSLOST:
                 self.window_focus = False
             if i.type == WINDOWFOCUSGAINED:

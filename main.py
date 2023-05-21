@@ -3,6 +3,7 @@ import re
 import traceback
 
 import core.assets
+from core.game import Game
 
 try:
     from core.common.names import *
@@ -20,7 +21,7 @@ try:
         flags = 0
 
     cr.screen = make_screen([9,18],25,flags)
-
+    cr.game = Game()
     cr.event_holder = EventHolder()
 
     cr.event_holder.determined_fps = 0
@@ -41,8 +42,9 @@ try:
             rotated_pic = pg.transform.rotate(pic,angle)
             rect = rotated_pic.get_rect()
             rect.center = cr.screen.get_rect().center
-
             cr.screen.blit(rotated_pic,rect)
+
+            cr.game.render()
 
             pg.display.update()
             await asyncio.sleep(0)
