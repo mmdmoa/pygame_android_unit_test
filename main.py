@@ -3,8 +3,11 @@ import sys
 import re
 import traceback
 
+import pygame_gui.core.utility
+
 import core.assets
 from core.game import Game
+from gui.pygame_ce.functions import scale_by
 
 try:
     from core.common.names import *
@@ -48,13 +51,16 @@ try:
 
 
     w,h = cr.screen.get_size()
-    text_table = ["blit;ClownBlit","rotate;ClownRotate","party;ClownParty"]
+    text_table = ["blit;Clown Blit","rotate;Clown Rotate","party;Clown Party","deathParty;Clown Death Party"]
 
     page = Page(Rect(w*0.1,h*0.1,w*0.8,h*0.8),text_table,fonts['medium'])
     gui_cr.menu.add_page(page)
     gui_cr.menu.active_page = 0
+
     page.text_box_dict['blit'].onclick_action = set_active_game(ClownBlit)
     page.text_box_dict['rotate'].onclick_action = set_active_game(ClownRotate)
+    page.text_box_dict['party'].onclick_action = set_active_game(ClownParty)
+    page.text_box_dict['deathParty'].onclick_action = set_active_game(DeathParty)
 
     cr.event_holder.determined_fps = 0
 
@@ -76,6 +82,9 @@ try:
     async def main_loop():
         pic = pics['clown'].copy()
         rotated_pic = pic.copy()
+        mini_scale = 0.2
+        mini_pic = scale_by(pic,mini_scale).convert_alpha()
+
         angle = 0
 
         while not cr.event_holder.should_quit:
@@ -100,6 +109,28 @@ try:
                     rect.center = cr.screen.get_rect().center
                     cr.screen.blit(rotated_pic,rect)
                     cr.game.render()
+
+                if active_game == DeathParty:
+                    mini_pic = scale_by(pic, mini_scale).convert_alpha()
+
+                if active_game in [ClownParty,DeathParty]:
+                    angle += cr.event_holder.dt * 25
+                    rotated_pic = pg.transform.rotate(mini_pic, angle)
+
+                    for x in range(-2,3):
+                        for y in range(-2,3):
+                            rect = mini_pic.get_rect()
+                            rect.center = cr.screen.get_rect().center
+                            rect.x += rect.w * x
+                            rect.y += rect.h * y
+
+                            rotate_rect = rotated_pic.get_rect()
+                            rotate_rect.center = rect.center
+
+                            cr.screen.blit(rotated_pic, rotate_rect)
+
+
+
             else:
                 if K_AC_BACK in cr.event_holder.pressed_keys:
                     cr.event_holder.should_quit = True
