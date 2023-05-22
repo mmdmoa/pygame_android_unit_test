@@ -3,13 +3,11 @@ import sys
 import re
 import traceback
 
-import pygame_gui.core.utility
-
-import core.assets
-from core.game import Game
-from gui.pygame_ce.functions import scale_by
 
 try:
+    import core.assets
+    from core.game import Game
+    from gui.pygame_ce.functions
     from core.common.names import *
     import core.common.resources as cr
     import gui.common.resources as gui_cr
