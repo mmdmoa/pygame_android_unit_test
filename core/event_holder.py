@@ -3,6 +3,10 @@ import core.common.resources as cr
 
 class EventHolder :
     def __init__( self ) :
+        self.event_list: list[pg.Event] = []
+
+        self.should_run_game = False
+
         self.pressed_keys = []
         self.released_keys = []
         self.held_keys = []
@@ -44,8 +48,8 @@ class EventHolder :
         self.mouse_moved = False
         self.final_fps = self.clock.get_fps()
         self.dt = (self.clock.tick(self.determined_fps) / 1000)
-
-        for i in pg.event.get() :
+        self.event_list = pg.event.get()
+        for i in self.event_list :
             if i.type == FINGERDOWN or i.type == FINGERMOTION:
                 self.fingers[i.finger_id] = i
                 self.fingers[i.finger_id].x *= cr.screen.get_width()
